@@ -1,0 +1,42 @@
+.index {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+.center {
+  padding: 44px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--color-background-soft);
+  width: 800px;
+  gap: 20px;
+}
+.form-item {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  gap: 10px;
+}
+.form-item-title {
+  min-width: 100px;
+}
+.form-item-value {
+  flex: 1;
+}
+.form-input-50 {
+  width: 50%;
+}
+.form-input-100 {
+  width: 100%;
+}
+.submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}

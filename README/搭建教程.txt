@@ -1,0 +1,190 @@
+
+向XX开炮  Linux   搭建教程
+
+测试系统：Centos7.6
+
+
+安装宝塔
+
+yum install -y wget && wget -O install.sh http://download.bt.cn/install/install_6.0.sh && sh install.sh
+
+输入y回车确认安装
+
+
+
+放行端口：1-65535
+
+关闭防火墙
+
+systemctl stop firewalld.service  
+systemctl disable firewalld.service
+
+安装环境
+
+Nginx 1.24
+MySQL 5.7.44
+PHP 7.4
+PHP 5.6
+PHP 8.0
+Redis 7.4设置>性能调整>设置密码requirepass改成10086abc 
+
+
+上传服务端kp.zip到服务器的根目录
+
+解压
+
+cd /
+unzip kp.zip
+
+
+给权限
+
+chmod -R 7777 /data
+
+
+安装java
+
+yum install -y java-1.8.0-openjdk-devel.x86_64
+
+安装apache-pulsar
+
+cd /data
+tar -zxvf apache-pulsar-2.10.0-bin.tar.gz
+
+cd /data/apache-pulsar-2.10.0/
+bin/pulsar-daemon start standalone
+bin/pulsar-admin namespaces create public/t5game_1_9999
+bin/pulsar-admin topics create persistent://public/t5game_1_9999/mq_battle
+
+
+设置数据库密码：10086abc
+
+数据库>设置> 配置文件>添加到26行
+
+lower_case_table_names=1
+
+
+创建并导入数据库
+
+mysql -uroot -p10086abc
+grant all privileges on *.* to 'ysjba'@'%' identified by '10086abc';
+create database ag_oper_v2;
+create database ag_region;
+create database agame_1_1600;
+create database agame_1_9999;
+create database agame_oss_account;
+create database game_oper_log;
+create database global_channel_gift_info;
+create database global_chat_data;
+create database global_forbid_keyword_data;
+create database global_notice_config;
+create database global_oss_mail_data;
+create database global_rank_data_9000;
+create database global_region_create_role_data;
+create database global_relation_data_test;
+create database global_server_dir_list;
+create database global_upload_photo_info;
+create database logload_1_9999;
+create database logload_record_1_9999;
+create database logload_stat_1_9999;
+
+use ag_oper_v2;
+source /data/kp_sql/ag_oper_v2.sql;
+use ag_region;
+source /data/kp_sql/ag_region.sql;
+use agame_1_1600;
+source /data/kp_sql/agame_1_1600.sql;
+use agame_1_9999;
+source /data/kp_sql/agame_1_9999.sql;
+use agame_oss_account;
+source /data/kp_sql/agame_oss_account.sql;
+use game_oper_log;
+source /data/kp_sql/game_oper_log.sql;
+use global_channel_gift_info;
+source /data/kp_sql/global_channel_gift_info.sql;
+use global_chat_data;
+source /data/kp_sql/global_chat_data.sql;
+use global_forbid_keyword_data;
+source /data/kp_sql/global_forbid_keyword_data.sql;
+use global_notice_config;
+source /data/kp_sql/global_notice_config.sql;
+use global_oss_mail_data;
+source /data/kp_sql/global_oss_mail_data.sql;
+use global_rank_data_9000;
+source /data/kp_sql/global_rank_data_9000.sql;
+use global_region_create_role_data;
+source /data/kp_sql/global_region_create_role_data.sql;
+use global_relation_data_test;
+source /data/kp_sql/global_relation_data_test.sql;
+use global_server_dir_list;
+source /data/kp_sql/global_server_dir_list.sql;
+use global_upload_photo_info;
+source /data/kp_sql/global_upload_photo_info.sql;
+use logload_1_9999;
+source /data/kp_sql/logload_1_9999.sql;
+use logload_record_1_9999;
+source /data/kp_sql/logload_record_1_9999.sql;
+use logload_stat_1_9999;
+source /data/kp_sql/logload_stat_1_9999.sql;
+
+exit
+
+
+编译安装libiconv
+
+cd /data/kp
+tar -zxvf libiconv-1.16.tar.gz
+cd libiconv-1.16
+./configure --prefix=/usr/local/libiconv
+make && make isntall
+echo "/usr/local/libiconv/lib" | sudo tee -a /etc/ld.so.conf.d/libiconv.conf
+sudo ldconfig
+
+创建网站
+
+127.0.0.1:83       指向目录  /data/kp_web      版本php5.6
+
+127.0.0.2:82       指向目录  /data/cdn-t5game1.scgame.com.cn      版本php8.0
+
+IP:81                 指向目录  /data/web-t5game2.scgame.com.cn    关闭防跨站      版本php7.4
+
+重启php 5.6
+
+
+修改服务端文件IP：替换：118.25.55.225
+
+\data\cdn-t5game1.scgame.com.cn\ver\check_ver.php
+
+\data\web-t5game2.scgame.com.cn\dir\world_cfg_test.json
+
+\data\web-t5game2.scgame.com.cn\dir\xg_dir.php
+
+启动游戏
+
+cd /data/apache-pulsar-2.10.0/
+bin/pulsar-daemon start standalone
+cd /data/kp/server_9999/runenv
+./start_all.sh
+
+
+
+修改安卓客户端文件IP：替换：118.25.55.225    
+
+\assets\ab\assets_resources_config_platforminfo.bytes     不限制位数UABEAvalonia最新版用这个软件
+
+\assets\Config_dodsdk.bytes
+
+\assets\Config_dyxsb.bytes
+
+\assets\urlConfig.json
+
+苹果自测
+
+
+注册地址：
+
+IP:83
+
+后台地址：
+
+IP:81/bi/index.php      GM校验码:123456
